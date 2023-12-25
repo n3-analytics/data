@@ -1,0 +1,39 @@
+name: Fetch and Store N3 Transaction Data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fetchData:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup Git and Environment
+      env:
+        GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git
+        git config --global user.name 'GitHub Actions'
+        git clone https://x-access-token:${GIT_TOKEN}@github.com/n3-analytics/data.git repo
+        
+    - name: Create 'candidates' Folder
+      run: |
+        cd repo
+        mkdir -p candidates
+        
+    - name: Fetch Data and Save
+      run: |
+        cd repo
+        while IFS= read -r address
+        do
+          curl -X POST -H "Content-Type: application/json" -d "{\"address\": \"$address\", \"method\": \"getnep17transfers\"}" https://neodepot-tokentracker.azurewebsites.net/api/FetchNeoTransactions > "candidates/result-$address.json"
+          echo "Content-Type: application/json" -d "{\"address\": \"$address\", \"method\": \"getnep17transfers\"}"
+        done < addresses.txt
+
+    - name: Commit and Push Results
+      run: |
+        cd repo
+        git add .
+        git commit -m "Update data" || echo "No changes to commit"
+        git push
