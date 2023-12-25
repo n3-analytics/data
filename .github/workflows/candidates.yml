@@ -2,7 +2,8 @@ name: Fetch and Store N3 Transaction Data
 
 on:
   workflow_dispatch:
-
+permissions:
+  contents: write
 jobs:
   fetchData:
     runs-on: ubuntu-latest
