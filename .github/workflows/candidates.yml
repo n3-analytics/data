@@ -24,10 +24,10 @@ jobs:
         
     - name: Fetch Data and Save
       run: |
-        cd repo
+        cd repo/candidates
         while IFS= read -r address
         do
-          curl -X POST -H "Content-Type: application/json" -d "{\"address\": \"$address\", \"method\": \"getnep17transfers\"}" https://neodepot-tokentracker.azurewebsites.net/api/FetchNeoTransactions > "candidates/result-$address.json"
+          curl -X POST -H "Content-Type: application/json" -d "{\"address\": \"$address\", \"method\": \"getnep17transfers\"}" https://neodepot-tokentracker.azurewebsites.net/api/FetchNeoTransactions > "result-$address.json"
           echo "Content-Type: application/json" -d "{\"address\": \"$address\", \"method\": \"getnep17transfers\"}"
         done < addresses.txt
 
